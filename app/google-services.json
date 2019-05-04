@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "871541139474",
+    "firebase_url": "https://veersgym-f1fc7.firebaseio.com",
+    "project_id": "veersgym-f1fc7",
+    "storage_bucket": "veersgym-f1fc7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:871541139474:android:4d4419b2c662fc9d",
+        "android_client_info": {
+          "package_name": "com.veersgym.manik"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "871541139474-r56dklud3u406ccpvmrb4hb6bs3qllvv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.veersgym.manik",
+            "certificate_hash": "b25897657481d49dfb096347930ffe1f65f30b84"
+          }
+        },
+        {
+          "client_id": "871541139474-b8qgdut5imigfhi8cthae7um1hv54rjs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQIptPKhkiKvlyZhzykOtH6VHTybFjP0c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "871541139474-b8qgdut5imigfhi8cthae7um1hv54rjs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

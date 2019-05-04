@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Veer\'s Gym</string>
+    <array name="branch">
+        <item>Veer\'s Gym</item>
+        <item>Crossfit Fitness</item>
+    </array>
+</resources>
