@@ -4,4 +4,8 @@
     <color name="colorPrimaryDark">#202020</color>
     <color name="colorAccent">#D81B60</color>
     <color name="error">#CE4343</color>
+    <color name="aadded">#2C9E36</color>
+    <color name="fab_add">#43AF82</color>
+    <color name="veers_btn">#ECD700</color>
+
 </resources>

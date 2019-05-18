@@ -4,12 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_margin="8dp"
-
+android:id="@+id/one_card_view"
     app:cardCornerRadius="8dp"
     android:layout_height="wrap_content"
-    app:cardElevation="7dp">
+    app:cardElevation="5dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_one_member"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -41,8 +42,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="32dp"
             android:text="Manik SIngh"
+            android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_one_id" />
 
@@ -50,7 +52,7 @@
             android:id="@+id/textView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="32dp"
             android:text="Days : "
             app:layout_constraintEnd_toStartOf="@+id/tv_one_daysremain"
             app:layout_constraintTop_toBottomOf="@+id/tv_one_joindate" />
@@ -59,7 +61,7 @@
             android:id="@+id/tv_one_daysremain"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="32dp"
             android:layout_marginEnd="8dp"
             android:text="30"
             app:layout_constraintEnd_toEndOf="parent"
