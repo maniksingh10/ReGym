@@ -20,10 +20,16 @@ public class CustomRecycle extends RecyclerView.Adapter<CustomRecycle.CustomView
 
     private ArrayList<GymMember> gymMembersRecycle = new ArrayList<>();
     private Context context;
+    final private onLongItemCustom onLongItemCustom;
 
-    public CustomRecycle(ArrayList<GymMember> gymMembersRecycle, Context context) {
+    public CustomRecycle(ArrayList<GymMember> gymMembersRecycle, Context context, onLongItemCustom onLongItemCustom) {
         this.gymMembersRecycle = gymMembersRecycle;
         this.context = context;
+        this.onLongItemCustom = onLongItemCustom;
+    }
+
+    public interface onLongItemCustom{
+        void onLongItemClicked(int clickeditem);
     }
 
     @NonNull
@@ -42,7 +48,6 @@ public class CustomRecycle extends RecyclerView.Adapter<CustomRecycle.CustomView
         holder.gender_one_tv.setText(gymMember.getGender());
         holder.id_one_tv.setText(String.valueOf(gymMember.getGymid()));
         holder.days_remain_tv.setText(String.valueOf(days_remain(gymMember.getFeedate())));
-        holder.itemView.setOnLongClickListener(this);
 
         if (days_remain(gymMember.getFeedate()) < 0) {
             holder.constraintLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.border));
@@ -73,7 +78,7 @@ public class CustomRecycle extends RecyclerView.Adapter<CustomRecycle.CustomView
     }
 
 
-    public class CustomViewHolder extends RecyclerView.ViewHolder {
+    public class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
 
         TextView name_one_tv, gender_one_tv, branch_one_tv, id_one_tv, joindate_one_tv, days_remain_tv;
         ConstraintLayout constraintLayout;
@@ -91,8 +96,15 @@ public class CustomRecycle extends RecyclerView.Adapter<CustomRecycle.CustomView
             constraintLayout = itemView.findViewById(R.id.container_one_member);
             cardView = itemView.findViewById(R.id.one_card_view);
             cardView.setVisibility(View.GONE);
+            itemView.setOnLongClickListener(this);
         }
 
 
+        @Override
+        public boolean onLongClick(View v) {
+            int pos = getAdapterPosition();
+            onLongItemCustom.onLongItemClicked(pos);
+            return true;
+        }
     }
 }

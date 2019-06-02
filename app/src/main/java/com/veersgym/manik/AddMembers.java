@@ -102,13 +102,13 @@ public class AddMembers extends AppCompatActivity {
             int sms_days = get_days(Integer.parseInt(et_add_months.getText().toString()), Integer.parseInt(et_add_days.getText().toString()));
             if (branch.matches("Veer's Gym")) {
                 sendSMS(mobile, "Hey " + name + "," + "\n\nYou are successfully registered.\n" +
-                        "Your Membership No. is " + gymida + " your subscription is valid for next " + sms_days +
+                        "Your Membership No. is " + gymida + " and subscription is valid for next " + sms_days +
                         " days.\nGym Timings are\nMonday to Saturday - 5AM-10PM\nSunday - 4PM-10PM"
                         + "\n\nTeam Veer's Gym\nGet Ripped Stay Fit\uD83D\uDCAA");
 
             } else if (branch.matches("Crossfit Fitness")) {
                 sendSMS(mobile, "Hey " + name + "," + "\n\nYou are successfully registered.\n" +
-                        "Your Membership No. is " + gymida + " your subscription is valid for next " + sms_days +
+                        "Your Membership No. is " + gymida + " and subscription is valid for next " + sms_days +
                         " days.\nGym Timings are\nMonday to Saturday - 5AM-10PM\nSunday - 4PM-10PM" + "\n\nTeam Crossfit Fitness\uD83D\uDCAA");
             }
         }
@@ -138,7 +138,7 @@ public class AddMembers extends AppCompatActivity {
     private long finalFee() {
         long feefi;
         try {
-            feefi = (Integer.parseInt(et_add_months.getText().toString()) * 2592880000L) +
+            feefi = (Integer.parseInt(et_add_months.getText().toString()) * 2622880000L) +
                     (Integer.parseInt(et_add_days.getText().toString()) * 86460000L);
             return feefi +System.currentTimeMillis();
         } catch (Exception e) {
@@ -152,10 +152,9 @@ public class AddMembers extends AppCompatActivity {
         try {
             SmsManager smsManager = SmsManager.getDefault();
             ArrayList<String> parts = smsManager.divideMessage(msg);
-            smsManager.sendMultipartTextMessage(phoneNo, null, parts, null, null);
+            smsManager.sendMultipartTextMessage("+91"+phoneNo, null, parts, null, null);
 //            smsManager.sendTextMessage(phoneNo, null, msg, null, null);
-            Toast.makeText(getApplicationContext(), "Message Sent",
-                    Toast.LENGTH_LONG).show();
+
         } catch (Exception ex) {
             Toast.makeText(getApplicationContext(), ex.getMessage().toString(),
                     Toast.LENGTH_LONG).show();

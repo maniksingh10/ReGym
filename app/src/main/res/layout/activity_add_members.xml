@@ -82,7 +82,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="32dp"
         android:text="₹"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -92,7 +92,7 @@
         android:id="@+id/et_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="32dp"
         android:ems="5"
         android:hint="Amount"
         android:inputType="number"
@@ -105,36 +105,33 @@
         android:id="@+id/et_days"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="4dp"
         android:ems="3"
         android:hint="Days"
         android:inputType="number"
         android:maxLength="2"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+        app:layout_constraintTop_toTopOf="@+id/et_months" />
 
     <EditText
         android:id="@+id/et_months"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="12dp"
+        android:layout_marginEnd="16dp"
         android:ems="4"
         android:hint="Months"
         android:inputType="number"
         android:maxLength="2"
         android:textAlignment="center"
         app:layout_constraintEnd_toStartOf="@+id/et_days"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+        app:layout_constraintTop_toTopOf="@+id/et_amount" />
 
     <EditText
         android:id="@+id/et_mobile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="40dp"
         android:ems="7"
         android:hint="Mobile Number"
         android:inputType="phone"
@@ -147,7 +144,7 @@
         android:id="@+id/et_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="40dp"
         android:ems="8"
         android:hint="Email ID"
         android:inputType="textEmailAddress"
@@ -160,9 +157,9 @@
         android:id="@+id/bt_add_member"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:backgroundTint="#EBDA05"
+        android:backgroundTint="@color/fab_add"
         android:text="Add Member"
-        android:textColor="#000"
+
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -193,9 +190,8 @@
         android:id="@+id/cb_send_sms"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
         android:layout_marginEnd="8dp"
         android:text="Send SMS"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_email" />
+        app:layout_constraintTop_toTopOf="@+id/spinner" />
 </androidx.constraintlayout.widget.ConstraintLayout>
