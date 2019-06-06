@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -28,7 +29,7 @@ import java.util.Locale;
 
 public class AddMembers extends AppCompatActivity {
 
-    private EditText et_add_name, et_add_amount, et_add_id, et_add_months, et_add_days, et_add_mobile, et_add_emailid;
+    private EditText et_add_name, et_add_amount, et_add_id, et_add_months, et_add_days, et_add_mobile, et_add_emailid, et_add_age;
     private Button bt_add_member;
     private DatabaseReference databaseReference;
     private TextView tv_dateshow;
@@ -51,6 +52,7 @@ public class AddMembers extends AppCompatActivity {
         et_add_days = findViewById(R.id.et_days);
         et_add_mobile = findViewById(R.id.et_mobile);
         et_add_emailid = findViewById(R.id.et_email);
+        et_add_age = findViewById(R.id.et_age);
         bt_add_member = findViewById(R.id.bt_add_member);
         tv_dateshow = findViewById(R.id.tv_date);
         tv_dateshow.setText(date);
@@ -63,7 +65,7 @@ public class AddMembers extends AppCompatActivity {
         bt_add_member.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(check()){
+                if (check()) {
                     addMember();
                 }
             }
@@ -72,7 +74,7 @@ public class AddMembers extends AppCompatActivity {
 
     private boolean check() {
         if (et_add_name.getText().toString().isEmpty() || et_add_amount.getText().toString().isEmpty() || et_add_id.getText().toString().isEmpty() || et_add_months.getText().toString().isEmpty()
-                || et_add_mobile.getText().toString().isEmpty() || et_add_days.getText().toString().isEmpty() || et_add_mobile.getText().toString().length() != 10) {
+                || et_add_mobile.getText().toString().isEmpty() || et_add_days.getText().toString().isEmpty() || et_add_mobile.getText().toString().length() != 10 || et_add_id.getText().toString().isEmpty()) {
             showError();
             return false;
         } else {
@@ -90,34 +92,75 @@ public class AddMembers extends AppCompatActivity {
         final String mobile = et_add_mobile.getText().toString();
         final String name = et_add_name.getText().toString();
         final String gymida = et_add_id.getText().toString();
+        String email = et_add_emailid.getText().toString().toLowerCase();
         String key = databaseReference.push().getKey();
         GymMember gymMember = new GymMember(name, gender, branch,
-                et_add_emailid.getText().toString().toLowerCase(),
+                email,
                 mobile, "Tra Email", key, Integer.parseInt(gymida)
-                , Integer.parseInt(et_add_amount.getText().toString()),  finalFee(),
-                System.currentTimeMillis(), Integer.parseInt(et_add_months.getText().toString()));
+                , Integer.parseInt(et_add_amount.getText().toString()), finalFee(),
+                System.currentTimeMillis(), Integer.parseInt(et_add_months.getText().toString()),Integer.parseInt(et_add_age.getText().toString()));
         databaseReference.child(key).setValue(gymMember);
 
-        if (cb_send_sms.isChecked()) {
-            int sms_days = get_days(Integer.parseInt(et_add_months.getText().toString()), Integer.parseInt(et_add_days.getText().toString()));
-            if (branch.matches("Veer's Gym")) {
-                sendSMS(mobile, "Hey " + name + "," + "\n\nYou are successfully registered.\n" +
-                        "Your Membership No. is " + gymida + " and subscription is valid for next " + sms_days +
-                        " days.\nGym Timings are\nMonday to Saturday - 5AM-10PM\nSunday - 4PM-10PM"
-                        + "\n\nTeam Veer's Gym\nGet Ripped Stay Fit\uD83D\uDCAA");
 
-            } else if (branch.matches("Crossfit Fitness")) {
-                sendSMS(mobile, "Hey " + name + "," + "\n\nYou are successfully registered.\n" +
-                        "Your Membership No. is " + gymida + " and subscription is valid for next " + sms_days +
-                        " days.\nGym Timings are\nMonday to Saturday - 5AM-10PM\nSunday - 4PM-10PM" + "\n\nTeam Crossfit Fitness\uD83D\uDCAA");
-            }
+        int sms_days = get_days(Integer.parseInt(et_add_months.getText().toString()), Integer.parseInt(et_add_days.getText().toString()));
+        if (branch.matches("Veer's Gym")) {
+            notifyUsers(mobile, "Hey " + name + "," + "\n\nYou are successfully registered.\n" +
+                    "Your Membership No. is " + gymida + " and subscription is valid for next " + sms_days +
+                    " days.\nGym Timings are\nMonday to Saturday - 5AM-10PM\nSunday - 4PM-10PM"
+                    + "\n\nTeam Veer's Gym\nGet Ripped Stay Fit\uD83D\uDCAA", branch, email);
+
+        } else if (branch.matches("Crossfit Fitness")) {
+            notifyUsers(mobile, "Hey " + name + "," + "\n\nYou are successfully registered.\n" +
+                    "Your Membership No. is " + gymida + " and subscription is valid for next " + sms_days +
+                    " days.\nGym Timings are\nMonday to Saturday - 5AM-10PM\nSunday - 4PM-10PM" + "\n\nTeam Crossfit Fitness\uD83D\uDCAA", branch, email);
         }
+
         Snackbar snackbar = Snackbar.make(rootview, name + " added with Id " + gymida, Snackbar.LENGTH_LONG);
         View snackBarView = snackbar.getView();
         snackBarView.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.aadded));
         snackBarView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         snackbar.show();
         clearForm();
+    }
+
+    private void notifyUsers(String mobile, final String msg, String branch, final String email) {
+
+        if (cb_send_sms.isChecked()) {
+            sendSMS(mobile, msg);
+        }
+
+        if (branch.matches("Veer's Gym")) {
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        GMailSender sender = new GMailSender("veersgymmail@gmail.com",
+                                "8285410619");
+                        sender.sendMail("Welcome to Veer's Gym", msg,
+                                "veersgymmail@gmail.com", email,"Veer's Gym");
+                    } catch (Exception e) {
+                        Log.e("SendMail", e.getMessage(), e);
+                    }
+                }
+            }).start();
+        } else if (branch.matches("Crossfit Fitness")) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        GMailSender sender = new GMailSender("crossfitfitnessmail@gmail.com",
+                                "8285410619");
+                        sender.sendMail("Welcome to Crossfit Fitness Headquarters", msg,
+                                "crossfitfitnessmail@gmail.com", email,"Crossfit Fitness Headquarters");
+                    } catch (Exception e) {
+                        Log.e("SendMail", e.getMessage(), e);
+                    }
+                }
+            }).start();
+        } else {
+
+        }
     }
 
     private void clearForm() {
@@ -128,6 +171,7 @@ public class AddMembers extends AppCompatActivity {
         et_add_days.setText("");
         et_add_mobile.setText("");
         et_add_emailid.setText("");
+        et_add_age.setText("");
         et_add_name.requestFocus();
     }
 
@@ -140,7 +184,7 @@ public class AddMembers extends AppCompatActivity {
         try {
             feefi = (Integer.parseInt(et_add_months.getText().toString()) * 2622880000L) +
                     (Integer.parseInt(et_add_days.getText().toString()) * 86460000L);
-            return feefi +System.currentTimeMillis();
+            return feefi + System.currentTimeMillis();
         } catch (Exception e) {
             showError();
             return 0;
@@ -148,13 +192,12 @@ public class AddMembers extends AppCompatActivity {
     }
 
 
-    public void sendSMS(String phoneNo, String msg) {
+    public void sendSMS(String phoneNo, final String msg) {
         try {
             SmsManager smsManager = SmsManager.getDefault();
             ArrayList<String> parts = smsManager.divideMessage(msg);
-            smsManager.sendMultipartTextMessage("+91"+phoneNo, null, parts, null, null);
+            smsManager.sendMultipartTextMessage("+91" + phoneNo, null, parts, null, null);
 //            smsManager.sendTextMessage(phoneNo, null, msg, null, null);
-
         } catch (Exception ex) {
             Toast.makeText(getApplicationContext(), ex.getMessage().toString(),
                     Toast.LENGTH_LONG).show();
@@ -169,4 +212,6 @@ public class AddMembers extends AppCompatActivity {
         snackBarView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         snackbar.show();
     }
+
+
 }

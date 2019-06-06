@@ -14,11 +14,12 @@ public class GymMember {
     private long feedate;
     private long joindate;
     private int months;
+    private int yob;
 
     public GymMember() {
     }
 
-    public GymMember(String name, String gender, String branch, String emailid, String mobile, String traineremailid, String id, int gymid, int amount, long feedate, long joindate, int months) {
+    public GymMember(String name, String gender, String branch, String emailid, String mobile, String traineremailid, String id, int gymid, int amount, long feedate, long joindate, int months,int yob) {
         this.name = name;
         this.gender = gender;
         this.branch = branch;
@@ -31,6 +32,7 @@ public class GymMember {
         this.feedate = feedate;
         this.joindate = joindate;
         this.months = months;
+        this.yob= yob;
     }
 
     public String getName() {
@@ -79,5 +81,9 @@ public class GymMember {
 
     public int getMonths() {
         return months;
+    }
+
+    public int getYob() {
+        return yob;
     }
 }

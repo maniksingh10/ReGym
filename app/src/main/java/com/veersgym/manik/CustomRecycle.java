@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class CustomRecycle extends RecyclerView.Adapter<CustomRecycle.CustomViewHolder> implements View.OnLongClickListener {
 
@@ -48,15 +49,25 @@ public class CustomRecycle extends RecyclerView.Adapter<CustomRecycle.CustomView
         holder.gender_one_tv.setText(gymMember.getGender());
         holder.id_one_tv.setText(String.valueOf(gymMember.getGymid()));
         holder.days_remain_tv.setText(String.valueOf(days_remain(gymMember.getFeedate())));
+        holder.age_one_tv.setText(getMemAge(gymMember.getYob()));
 
         if (days_remain(gymMember.getFeedate()) < 0) {
             holder.constraintLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.border));
             holder.cardView.setVisibility(View.VISIBLE);
         } else {
-            holder.constraintLayout.setBackgroundResource(0);
+            holder.constraintLayout.setBackground(ContextCompat.getDrawable(context, R.drawable.fee_ok_color));
             holder.cardView.setVisibility(View.VISIBLE);
         }
 
+    }
+
+    private String getMemAge(int yob) {
+        int age = Calendar.getInstance().get(Calendar.YEAR) - yob;
+        if (age > 100){
+            return "";
+        }else{
+            return String.valueOf(age);
+        }
     }
 
     private int days_remain(long feedate) {
@@ -80,7 +91,7 @@ public class CustomRecycle extends RecyclerView.Adapter<CustomRecycle.CustomView
 
     public class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
 
-        TextView name_one_tv, gender_one_tv, branch_one_tv, id_one_tv, joindate_one_tv, days_remain_tv;
+        TextView name_one_tv, gender_one_tv, branch_one_tv, id_one_tv, joindate_one_tv, days_remain_tv,age_one_tv;
         ConstraintLayout constraintLayout;
         CardView cardView;
 
@@ -93,6 +104,7 @@ public class CustomRecycle extends RecyclerView.Adapter<CustomRecycle.CustomView
             id_one_tv = itemView.findViewById(R.id.tv_one_id);
             joindate_one_tv = itemView.findViewById(R.id.tv_one_joindate);
             days_remain_tv = itemView.findViewById(R.id.tv_one_daysremain);
+            age_one_tv= itemView.findViewById(R.id.tv_one_age);
             constraintLayout = itemView.findViewById(R.id.container_one_member);
             cardView = itemView.findViewById(R.id.one_card_view);
             cardView.setVisibility(View.GONE);

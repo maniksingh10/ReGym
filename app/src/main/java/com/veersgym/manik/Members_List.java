@@ -3,14 +3,18 @@ package com.veersgym.manik;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.SmsManager;
@@ -18,6 +22,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -115,8 +120,7 @@ public class Members_List extends AppCompatActivity implements CustomRecycle.onL
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             if (direction == ItemTouchHelper.RIGHT) {
                 GymMember gymMember = gymMemberArrayList.get(viewHolder.getAdapterPosition());
-                showAlertDialog(context, gymMember.getName(), gymMember.getId());
-
+                callMember(gymMember.getMobile(),gymMember.getName());
                 customRecycleAdapter.notifyDataSetChanged();
             }
 
@@ -143,7 +147,8 @@ public class Members_List extends AppCompatActivity implements CustomRecycle.onL
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        sendSMS(gymMember.getMobile(), msg);
+                                        sendSMS(gymMember.getMobile(), msg,gymMember.getBranch(),gymMember.getEmailid());
+
                                     }
                                 });
                             }
@@ -160,7 +165,6 @@ public class Members_List extends AppCompatActivity implements CustomRecycle.onL
                 AlertDialog dialog = builder.create();
                 dialog.setIcon(android.R.drawable.ic_popup_reminder);
                 dialog.show();
-
             }
         }
 
@@ -182,8 +186,36 @@ public class Members_List extends AppCompatActivity implements CustomRecycle.onL
 
     };
 
+    private void callMember(final String mobile, String name){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Call " + name);
+        builder.setMessage("Do you want to call?");
+        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(ContextCompat.checkSelfPermission(
+                        context,android.Manifest.permission.CALL_PHONE) !=
+                        PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions((Activity) context, new
+                            String[]{android.Manifest.permission.CALL_PHONE}, 0);
+                } else {
+                    startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + mobile)));
+                }
+            }
+        });
+        builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
-    public static void showAlertDialog(final Context context, String title, final String id) {
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.setIcon(android.R.drawable.ic_menu_call);
+        dialog.show();
+
+    }
+
+    public static void deleteMember(final Context context, String title, final String id) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Remove " + title);
         builder.setMessage("Are you sure you want to delete this entry?");
@@ -257,12 +289,30 @@ public class Members_List extends AppCompatActivity implements CustomRecycle.onL
 
     @Override
     public void onLongItemClicked(int clickeditem) {
-        GymMember gymMember = gymMemberArrayList.get(clickeditem);
-        showAddDialog(gymMember);
+        final GymMember gymMember = gymMemberArrayList.get(clickeditem);
+
+        final CharSequence[] options = {"Renew Membership", "Remove Member"};
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(Members_List.this);
+
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                if (options[item].equals("Renew Membership")) {
+                    dialog.dismiss();
+                    showUpdateDialog(gymMember);
+
+                } else if (options[item].equals("Remove Member")) {
+                    dialog.dismiss();
+                    deleteMember(context,gymMember.getName(),gymMember.getId());
+                }
+            }
+        });
+        builder.show();
+
 
     }
 
-    private void showAddDialog(final GymMember gymMember) {
+    private void showUpdateDialog(final GymMember gymMember) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_update_fee, null);
@@ -293,18 +343,18 @@ public class Members_List extends AppCompatActivity implements CustomRecycle.onL
                     if (checkBox.isChecked()) {
                         databaseReference.child(fb_id).child("feedate").setValue((Integer.parseInt(editText.getText().toString()) * 2622880000L) + System.currentTimeMillis());
                         databaseReference.child(fb_id).child("amount").setValue(Integer.parseInt(editText1.getText().toString()));
-                        String msg = "Hey "+gymMember.getName()+",\n\n"+"Your Membership with "+gymMember.getBranch()+" ID "+gymMember.getGymid()+" has been successfully renewed for next "
-                                +days_remain((Integer.parseInt(editText.getText().toString()) * 2622880000L) + System.currentTimeMillis())
-                                +" days.\n\nTeam "+gymMember.getBranch()+"\uD83D\uDCAA";
-                        sendSMS(gymMember.getMobile(),msg);
-                    } else {
-                        databaseReference.child(fb_id).child("feedate").setValue((Integer.parseInt(editText.getText().toString()) * 2622880000L) + feedate);
-                        databaseReference.child(fb_id).child("amount").setValue(Integer.parseInt(editText1.getText().toString()));
                         String msg = "Hey "+gymMember.getName()+",\n\n"+"Welcome back, Your Membership with "+gymMember.getBranch()+" ID "+gymMember.getGymid()+" has been successfully renewed for next "
                                 +days_remain((Integer.parseInt(editText.getText().toString()) * 2622880000L) + System.currentTimeMillis())
                                 +" days.\n\nTeam "+gymMember.getBranch()+"\uD83D\uDCAA";
-                        sendSMS(gymMember.getMobile(),msg);
+                        sendSMS(gymMember.getMobile(),msg,gymMember.getBranch(),gymMember.getEmailid());
 
+                    } else {
+                        databaseReference.child(fb_id).child("feedate").setValue((Integer.parseInt(editText.getText().toString()) * 2622880000L) + feedate);
+                        databaseReference.child(fb_id).child("amount").setValue(Integer.parseInt(editText1.getText().toString()));
+                        String msg = "Hey "+gymMember.getName()+",\n\n"+"Your Membership with "+gymMember.getBranch()+" ID "+gymMember.getGymid()+" has been successfully renewed for next "
+                                +days_remain((Integer.parseInt(editText.getText().toString()) * 2622880000L) + System.currentTimeMillis())
+                                +" days.\n\nTeam "+gymMember.getBranch()+"\uD83D\uDCAA";
+                        sendSMS(gymMember.getMobile(),msg,gymMember.getBranch(),gymMember.getEmailid());
                     }
                 }
                 alertDialog.dismiss();
@@ -313,7 +363,7 @@ public class Members_List extends AppCompatActivity implements CustomRecycle.onL
     }
 
 
-    public void sendSMS(String phoneNo, String msg) {
+    public void sendSMS(String phoneNo, final String msg, String branch, final String email) {
         try {
             SmsManager smsManager = SmsManager.getDefault();
             ArrayList<String> parts = smsManager.divideMessage(msg);
@@ -326,6 +376,43 @@ public class Members_List extends AppCompatActivity implements CustomRecycle.onL
                     Toast.LENGTH_LONG).show();
             ex.printStackTrace();
         }
+
+
+        if (branch.matches("Veer's Gym")) {
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        GMailSender sender = new GMailSender("veersgymmail@gmail.com",
+                                "8285410619");
+                        sender.sendMail("Welcome to Veer's Gym", msg,
+                                "veersgymmail@gmail.com", email,"Veer's Gym");
+                    } catch (Exception e) {
+                        Log.e("SendMail", e.getMessage(), e);
+                    }
+                }
+            }).start();
+        } else if (branch.matches("Crossfit Fitness")) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        GMailSender sender = new GMailSender("crossfitfitnessmail@gmail.com",
+                                "8285410619");
+                        sender.sendMail("Welcome to Crossfit Fitness Headquarters", msg,
+                                "crossfitfitnessmail@gmail.com", email,"Crossfit Fitness Headquarters");
+                    } catch (Exception e) {
+                        Log.e("SendMail", e.getMessage(), e);
+                    }
+                }
+            }).start();
+        } else {
+
+        }
     }
+
+
+
 
 }
